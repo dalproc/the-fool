@@ -1,4 +1,4 @@
-import { Effect, System } from '..';
+import { Effect, EffectHelper, System } from '..';
 import type { CardEffects, StackWithCard } from '../schema/types';
 
 export const effects: CardEffects = {
@@ -16,7 +16,26 @@ export const effects: CardEffects = {
   // 実際の効果本体
   // 関数名に self は付かない
   onTurnStart: async (stack: StackWithCard): Promise<void> => {
-    await System.show(stack, 'トリニティ・アステリズム', '3ライフダメージ');
+    const opponent = stack.processing.owner.opponent;
+    // 対戦相手のフィールド、トリガーゾーン、手札のカードをリストアップ
+    const targetCards = [...opponent.field, ...opponent.trigger, ...opponent.hand];
+    if (targetCards.length > 0) {
+      await System.show(
+        stack,
+        'トリニティ・アステリズム',
+        'フィールド/トリガーゾーン/手札から3枚消滅\n3ライフダメージ'
+      );
+
+      // 消滅させる枚数（最大3枚まで）
+      const deleteCount = Math.min(3, targetCards.length);
+      const randomCards = EffectHelper.random(targetCards, deleteCount);
+      // 選択したカードを消滅させる
+      for (const card of randomCards) {
+        Effect.delete(stack, stack.processing, card);
+      }
+    } else {
+      await System.show(stack, 'トリニティ・アステリズム', '3ライフダメージ');
+    }
     Effect.modifyLife(stack, stack.processing, stack.processing.owner.opponent, -3);
   },
 };
