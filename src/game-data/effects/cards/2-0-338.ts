@@ -6,10 +6,13 @@ import { System } from '../engine/system';
 export const effects: CardEffects = {
   // トリガー: あなたがプレイヤーアタックを受けた時
   checkPlayerAttack: (stack: StackWithCard<Card>): boolean => {
+    const owner = stack.processing.owner;
+    const opponent = owner.opponent;
+
     return (
       stack.target?.id === stack.processing.owner.id &&
-      stack.processing.owner.hand.length > 0 &&
-      stack.processing.owner.opponent.field.length > 0
+      owner.hand.length > 0 &&
+      owner.field.length + opponent.field.length > 0
     );
   },
 
