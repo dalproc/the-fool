@@ -1,4 +1,4 @@
-import { Effect, EffectHelper, System } from '..';
+import { Effect, EffectHelper } from '..';
 import type { CardEffects, StackWithCard } from '../schema/types';
 
 export const effects: CardEffects = {
@@ -19,23 +19,27 @@ export const effects: CardEffects = {
     const opponent = stack.processing.owner.opponent;
     // 対戦相手のフィールド、トリガーゾーン、手札のカードをリストアップ
     const targetCards = [...opponent.field, ...opponent.trigger, ...opponent.hand];
-    if (targetCards.length > 0) {
-      await System.show(
-        stack,
-        'トリニティ・アステリズム',
-        'フィールド/トリガーゾーン/手札から3枚消滅\n3ライフダメージ'
-      );
 
-      // 消滅させる枚数（最大3枚まで）
-      const deleteCount = Math.min(3, targetCards.length);
-      const randomCards = EffectHelper.random(targetCards, deleteCount);
-      // 選択したカードを消滅させる
-      for (const card of randomCards) {
-        Effect.delete(stack, stack.processing, card);
-      }
-    } else {
-      await System.show(stack, 'トリニティ・アステリズム', '3ライフダメージ');
-    }
-    Effect.modifyLife(stack, stack.processing, stack.processing.owner.opponent, -3);
+    await EffectHelper.combine(stack, [
+      {
+        title: 'トリニティ・アステリズム',
+        description: 'フィールド/トリガーゾーン/手札から3枚消滅',
+        effect: () => {
+          // 消滅させる枚数（最大3枚まで）
+          const randomCards = EffectHelper.random(targetCards, 3);
+          // 選択したカードを消滅させる
+          for (const card of randomCards) {
+            Effect.delete(stack, stack.processing, card);
+          }
+        },
+        condition: targetCards.length > 0,
+      },
+      {
+        title: 'トリニティ・アステリズム',
+        description: '3ライフダメージ',
+        effect: () =>
+          Effect.modifyLife(stack, stack.processing, stack.processing.owner.opponent, -3),
+      },
+    ]);
   },
 };
