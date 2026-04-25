@@ -51,7 +51,7 @@ export function effectBounce(
     default: {
       const overflow =
         location !== 'deck' &&
-        target.owner[location].length < stack.core.room.rule.player.max[location];
+        target.owner[location].length >= stack.core.room.rule.player.max[location];
       effectMove(stack, source, target, overflow ? 'trash' : location);
     }
   }
