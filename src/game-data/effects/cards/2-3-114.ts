@@ -38,7 +38,7 @@ export const effects: CardEffects = {
             stack,
             stack.processing,
             target,
-            self => self.owner.life.current * 1000,
+            self => (self.owner.life.max - self.owner.life.current) * 1000,
             { source }
           );
       },
