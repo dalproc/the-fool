@@ -90,7 +90,7 @@ export const effects: CardEffects = {
       );
 
       // 選択したユニットを捨札に送る
-      Effect.break(stack, stack.processing, target);
+      Effect.move(stack, stack.processing, target, 'trash');
     }
   },
 };
