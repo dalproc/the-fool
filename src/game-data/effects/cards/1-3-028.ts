@@ -17,7 +17,7 @@ export const effects: CardEffects = {
     PermanentEffect.mount(stack.processing, {
       effect: (target, source) => {
         if (target instanceof Unit)
-          Effect.modifyBP(stack, stack.processing, target, 3000, { source });
+          Effect.modifyBP(stack, stack.processing, target, 4000, { source });
       },
       targets: ['self'],
       condition: target =>
