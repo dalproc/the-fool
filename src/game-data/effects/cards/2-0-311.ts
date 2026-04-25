@@ -38,9 +38,10 @@ export const effects: CardEffects = {
     Effect.activate(stack, stack.processing, target, false);
   },
 
-  // ターン終了時に相手の捨札から3枚をランダムで消滅
+  // 自分のターン終了時に相手の捨札から3枚をランダムで消滅
   onTurnEnd: async (stack: StackWithCard<Unit>) => {
     const opponent = stack.processing.owner.opponent;
+    if (stack.source.id === opponent.id) return;
     if (opponent.trash.length === 0) return;
 
     await System.show(stack, '食欲旺盛', '捨札から3枚消滅');
