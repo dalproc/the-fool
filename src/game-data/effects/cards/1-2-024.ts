@@ -106,7 +106,7 @@ export const effects: CardEffects = {
       }
 
       // ライフを+2する
-      owner.life.current = Math.min(owner.life.current + 2, owner.life.max);
+      Effect.modifyLife(stack, stack.processing, stack.processing.owner, +2);
     }
   },
 };
